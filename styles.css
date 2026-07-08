@@ -411,25 +411,6 @@ body {
   transform: scale(0.97);
 }
 
-.btn-next {
-  width: 100%;
-  padding: 16px;
-  margin-top: 16px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  font-family: var(--font);
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.btn-next:hover {
-  background: var(--surface-hover);
-}
-
 .hidden {
   display: none !important;
 }

@@ -28,7 +28,7 @@
     cardType: document.getElementById('card-type'),
     cardTarget: document.getElementById('card-target'),
     cardText: document.getElementById('card-text'),
-    btnNext: document.getElementById('btn-next'),
+    btnDone: document.getElementById('btn-done'),
     secretWarning: document.getElementById('secret-warning'),
     secretPlayerName: document.getElementById('secret-player-name'),
     secretNote: document.getElementById('secret-note'),
@@ -44,8 +44,55 @@
     screens[name].classList.add('active');
   }
 
+  function contentFor(mode) {
+    return mode === 'kizlar' ? KIZLAR_CONTENT : KARMA_CONTENT;
+  }
+
   function getContent() {
-    return state.mode === 'kizlar' ? KIZLAR_CONTENT : KARMA_CONTENT;
+    return contentFor(state.mode);
+  }
+
+  // Kullanılan kart indekslerini telefonda sakla: oyun kapansa bile tüm
+  // sorular bitmeden aynı soru tekrar gelmesin. Soru listesi güncellenirse
+  // (uzunluk değişirse) eski indeksler geçersiz olacağından o liste sıfırlanır.
+  const STORAGE_KEY = 'shot-truth-dare-used-v1';
+
+  function saveUsedCards() {
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          lengths: {
+            kizlar: { truths: KIZLAR_CONTENT.truths.length, dares: KIZLAR_CONTENT.dares.length },
+            karma: { truths: KARMA_CONTENT.truths.length, dares: KARMA_CONTENT.dares.length },
+          },
+          used: {
+            kizlar: { truths: state.usedTruths.kizlar, dares: state.usedDares.kizlar },
+            karma: { truths: state.usedTruths.karma, dares: state.usedDares.karma },
+          },
+        })
+      );
+    } catch (e) {
+      // localStorage kullanılamıyorsa (gizli sekme vb.) oyun kayıtsız devam eder.
+    }
+  }
+
+  function loadUsedCards() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (!saved || !saved.lengths || !saved.used) return;
+      ['kizlar', 'karma'].forEach((mode) => {
+        const content = contentFor(mode);
+        if (saved.lengths[mode].truths === content.truths.length) {
+          state.usedTruths[mode] = saved.used[mode].truths;
+        }
+        if (saved.lengths[mode].dares === content.dares.length) {
+          state.usedDares[mode] = saved.used[mode].dares;
+        }
+      });
+    } catch (e) {
+      // Bozuk kayıt — temiz başla.
+    }
   }
 
   // Kart öğeleri düz metin veya { text, secret, target } olabilir — tek biçime çevir.
@@ -72,6 +119,7 @@
 
     const index = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
     state[usedKey][state.mode].push(index);
+    saveUsedCards();
     return normalizeCard(arr[index]);
   }
 
@@ -140,7 +188,6 @@
     els.secretWarning.classList.add('hidden');
     els.secretNote.classList.add('hidden');
     els.cardTarget.classList.add('hidden');
-    els.btnNext.classList.add('hidden');
     els.cardPanel.classList.remove('card-panel--truth', 'card-panel--dare', 'card-panel--secret');
   }
 
@@ -168,7 +215,6 @@
     state.currentCard = { ...card, type };
     if (card.target) state.currentCard.targetName = pickTargetPlayer();
     els.choicePanel.classList.add('hidden');
-    els.btnNext.classList.add('hidden');
 
     if (card.secret) {
       // Gizli görev: önce herkese uyarı göster, metni sadece oyuncu açsın.
@@ -187,6 +233,7 @@
     els.cardPanel.classList.add(card.type === 'truth' ? 'card-panel--truth' : 'card-panel--dare');
     els.cardType.textContent = card.type === 'truth' ? 'DOĞRULUK' : 'CESARET';
     els.cardText.textContent = card.text;
+    els.btnDone.textContent = card.type === 'truth' ? 'Cevapladım ✓' : 'Yaptım ✓';
 
     if (card.targetName) {
       els.cardTarget.textContent = `🎯 Seçilen kişi: ${card.targetName}`;
@@ -200,13 +247,6 @@
     }
   }
 
-  // Kart kapatılırken gizli görev metnini ve hedef ismini sil ki telefon
-  // elden ele dolaşırken kimse görmesin.
-  function concealSecret(message) {
-    els.cardText.textContent = message;
-    els.secretNote.classList.add('hidden');
-    els.cardTarget.classList.add('hidden');
-  }
 
   function nextPlayer() {
     state.currentPlayerIndex++;
@@ -238,8 +278,6 @@
   function selectMode(mode) {
     state.mode = mode;
     state.players = [];
-    state.usedTruths = { kizlar: [], karma: [] };
-    state.usedDares = { kizlar: [], karma: [] };
 
     const label = MODE_LABELS[mode];
     els.modeBadge.textContent = label.name;
@@ -249,6 +287,8 @@
     showScreen('players');
     els.playerInput.focus();
   }
+
+  loadUsedCards();
 
   document.querySelectorAll('.mode-card').forEach((btn) => {
     btn.addEventListener('click', () => selectMode(btn.dataset.mode));
@@ -281,21 +321,8 @@
 
   document.getElementById('btn-reveal-secret').addEventListener('click', revealCard);
 
-  document.getElementById('btn-done').addEventListener('click', () => {
-    if (state.currentCard && state.currentCard.secret) {
-      concealSecret('🤫 Görev aklında! Telefonu geri verebilirsin.');
-    }
-    els.btnNext.classList.remove('hidden');
-  });
-
-  document.getElementById('btn-shot').addEventListener('click', () => {
-    if (state.currentCard && state.currentCard.secret) {
-      els.secretNote.classList.add('hidden');
-      els.cardTarget.classList.add('hidden');
-    }
-    els.cardText.textContent = '🥃 Shot attın! Sonraki oyuncuya geç.';
-    els.btnNext.classList.remove('hidden');
-  });
-
-  els.btnNext.addEventListener('click', nextPlayer);
+  // Cevapladım/Yaptım veya Shot → doğrudan sıradaki oyuncuya geç.
+  // Ekran anında sıfırlandığı için gizli görev metni de kimseye görünmez.
+  els.btnDone.addEventListener('click', nextPlayer);
+  document.getElementById('btn-shot').addEventListener('click', nextPlayer);
 })();

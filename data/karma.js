@@ -149,5 +149,36 @@ const KARMA_CONTENT = {
     },
     "Bir sonraki doğruluk cevabını ağzında içki varken gargara yaparak ver.",
     "İki doğru bir yalan söyle — grup hangisinin yalan olduğunu bulsun.",
+    {
+      text: "Bir sonraki tur boyunca her cümleye 'aslında' diye başla — bozuntuya verme. Yakalanırsan shot!",
+      secret: true,
+    },
+    {
+      text: "Önümüzdeki 5 dakika içinde sohbete doğal bir şekilde 'uzaylılar' kelimesini sıkıştır — kimse şüphelenmesin.",
+      secret: true,
+    },
+    {
+      text: "O her güldüğünde sen de gül — fark ederse sen shot atarsın.",
+      secret: true,
+      target: true,
+    },
+    {
+      text: "Önümüzdeki 10 dakika içinde ona fark ettirmeden üç kez dokun (omuz, kol, sırt) — şüphelenirse sen shot atarsın.",
+      secret: true,
+      target: true,
+    },
+    {
+      text: "Bu tur bitmeden bir kez sebepsiz alkışlamaya başla — nedenini asla açıklama.",
+      secret: true,
+    },
+    {
+      text: "Sıradaki oyuncu kartını okurken sen de sessizce dudaklarını oynatarak tekrar et — fark ederse sen shot atarsın.",
+      secret: true,
+    },
+    {
+      text: "Onunla bilek güreşi yap — kaybeden shot atar.",
+      target: true,
+    },
+    "Telefonunu çıkar: herkes en kötü pozunu versin, grup fotoğrafı çek — silmek yok, gecenin anısı.",
   ],
 };

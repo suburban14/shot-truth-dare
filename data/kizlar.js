@@ -98,7 +98,10 @@ const KIZLAR_CONTENT = {
     "Sevgilisi olan birini seç ve sevgilisi hakkında gerçekten ne düşündüğünü söyle.",
     "Gruptaki birine 'seni hiç hayal kırıklığına uğrattım mı?' diye sor ve cevabı sonuna kadar dinle.",
     "En utanç verici selfie'ni gruba göster.",
-    "Gruptaki birine 'senin hakkında hiç dedikodu yaptım mı?' diye sor — cevabın evetse anlat.",
+    {
+      text: "Ona 'senin hakkında dedikodu yaptığımı hiç düşündün mü?' diye sor — cevabını dinledikten sonra doğrusunu itiraf et.",
+      target: true,
+    },
     "Buradaki birinin tarzını 1 dakika boyunca taklit et.",
     "Ex'inin veya crush'ının son fotoğrafını aç, gruba göster ve bir yorum yap.",
     {
@@ -184,5 +187,37 @@ const KIZLAR_CONTENT = {
     "Telefonundaki en cringe kıyafetli fotoğrafını göster.",
     "Kendini grubun önünde ağlatmaya çalış — 1 dakikan var.",
     "Grup saçına istediği şekli versin — oyun bitene kadar öyle kal.",
+    {
+      text: "Önümüzdeki 10 dakika içinde ona fark ettirmeden üç kez iltifat et — şüphelenirse sen shot atarsın.",
+      secret: true,
+      target: true,
+    },
+    {
+      text: "O ne zaman içkisinden bir yudum alsa sen de al — fark ederse sen shot atarsın.",
+      secret: true,
+      target: true,
+    },
+    {
+      text: "Bir sonraki tur boyunca her cümlende 'canım' kelimesi geçsin — bozuntuya verme. Yakalanırsan shot!",
+      secret: true,
+    },
+    {
+      text: "Bir tur boyunca 'ben' demek yasak — kendinden adınla bahset. Yakalanırsan shot!",
+      secret: true,
+    },
+    {
+      text: "Önümüzdeki 5 dakika içinde sohbete doğal bir şekilde 'penguen' kelimesini sıkıştır — kimse şüphelenmesin.",
+      secret: true,
+    },
+    {
+      text: "Bir tur boyunca onun her söylediğinden sonra usulca 'ilginç...' de — belli etme, fark ederse sen shot atarsın.",
+      secret: true,
+      target: true,
+    },
+    {
+      text: "Onunla 1 dakika bakışma yarışı yap — ilk gülen shot atar.",
+      target: true,
+    },
+    "Gruptaki herkese tarzından yola çıkarak birer uydurma 'burç yorumu' yap.",
   ],
 };
