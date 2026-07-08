@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1a0a2e" />
+  <title>Shot · Truth or Dare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-glow bg-glow--1"></div>
+  <div class="bg-glow bg-glow--2"></div>
+
+  <main id="app">
+    <!-- Ana Sayfa -->
+    <section id="screen-home" class="screen active">
+      <header class="hero">
+        <div class="logo">🥃</div>
+        <h1>Shot</h1>
+        <p class="subtitle">Truth or Dare · İçki Oyunu</p>
+      </header>
+
+      <p class="section-label">Oyun modunu seç</p>
+
+      <div class="mode-cards">
+        <button class="mode-card mode-card--kizlar" data-mode="kizlar">
+          <span class="mode-card__emoji">💃</span>
+          <span class="mode-card__title">Kızlar Gecesi</span>
+          <span class="mode-card__desc">Sadece kız arkadaşlar · Cesur sorular &amp; cesaretler</span>
+        </button>
+
+        <button class="mode-card mode-card--karma" data-mode="karma">
+          <span class="mode-card__emoji">🔥</span>
+          <span class="mode-card__title">Karma Ortam</span>
+          <span class="mode-card__desc">Kız-erkek karışık · Eğlenceli &amp; zorlayıcı</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Oyuncular -->
+    <section id="screen-players" class="screen">
+      <button class="btn-back" id="btn-back-players" aria-label="Geri">←</button>
+
+      <header class="page-header">
+        <span class="mode-badge" id="mode-badge"></span>
+        <h2>Oyuncular</h2>
+        <p class="page-desc">En az 2 kişi ekle. Sıra rastgele gidecek.</p>
+      </header>
+
+      <div class="player-input-row">
+        <input
+          type="text"
+          id="player-name-input"
+          placeholder="İsim yaz..."
+          maxlength="20"
+          autocomplete="off"
+        />
+        <button class="btn-add" id="btn-add-player" aria-label="Ekle">+</button>
+      </div>
+
+      <ul class="player-list" id="player-list"></ul>
+
+      <p class="hint" id="player-hint">En az 2 oyuncu gerekli</p>
+
+      <button class="btn-primary" id="btn-start-game" disabled>Oyunu Başlat</button>
+    </section>
+
+    <!-- Oyun -->
+    <section id="screen-game" class="screen">
+      <div class="game-top">
+        <button class="btn-back btn-back--ghost" id="btn-back-game" aria-label="Geri">←</button>
+        <span class="round-counter" id="round-counter">Tur 1</span>
+      </div>
+
+      <div class="turn-card" id="turn-card">
+        <p class="turn-label">Sıra sende</p>
+        <h2 class="turn-name" id="current-player">—</h2>
+      </div>
+
+      <div class="choice-panel" id="choice-panel">
+        <p class="choice-label">Ne seçiyorsun?</p>
+        <div class="choice-buttons">
+          <button class="choice-btn choice-btn--truth" id="btn-truth">
+            <span class="choice-btn__icon">💬</span>
+            <span class="choice-btn__text">Doğruluk</span>
+          </button>
+          <button class="choice-btn choice-btn--dare" id="btn-dare">
+            <span class="choice-btn__icon">🔥</span>
+            <span class="choice-btn__text">Cesaret</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="secret-warning hidden" id="secret-warning">
+        <span class="secret-warning__icon">🤫</span>
+        <p class="secret-warning__title">Gizli Görev!</p>
+        <p class="secret-warning__text">
+          Bu kartı sadece <strong id="secret-player-name"></strong> görmeli.<br />
+          Telefonu ona verin, kimse bakmasın!
+        </p>
+        <button class="btn-primary btn-reveal" id="btn-reveal-secret">Sadece ben bakıyorum 👀</button>
+      </div>
+
+      <div class="card-panel hidden" id="card-panel">
+        <span class="card-type" id="card-type">DOĞRULUK</span>
+        <p class="card-text" id="card-text"></p>
+        <p class="secret-note hidden" id="secret-note">🤫 Görevi aklında tut — bitince kart kapanacak, kimse görmeyecek.</p>
+        <div class="card-actions">
+          <button class="btn-secondary" id="btn-done">Yaptım ✓</button>
+          <button class="btn-shot" id="btn-shot">Shot at 🥃</button>
+        </div>
+      </div>
+
+      <button class="btn-next hidden" id="btn-next">Sonraki Oyuncu →</button>
+    </section>
+  </main>
+
+  <script src="data/kizlar.js"></script>
+  <script src="data/karma.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

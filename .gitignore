@@ -1,0 +1,5 @@
+# macOS sistem dosyaları
+.DS_Store
+
+# Yerel geliştirme ayarları — internete yüklenmez
+.claude/
