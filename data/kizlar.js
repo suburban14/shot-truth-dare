@@ -1,6 +1,8 @@
 // Kızlar Gecesi modu içeriği.
-// Her öğe düz metin (string) ya da { text, secret: true } olabilir.
+// Her öğe düz metin (string) ya da { text, secret, target } nesnesi olabilir.
 // secret: true → görev sadece sırası gelen oyuncuya gösterilir.
+// target: true → uygulama, sırası gelen dışından rastgele bir hedef kişi seçer;
+//                metinde o kişiden "o/ona/onun" diye bahset.
 const KIZLAR_CONTENT = {
   truths: [
     "Bu odadakilerden hangisinin sevgilisi olmak isterdin — tabii ki sadece eğlencesine?",
@@ -43,36 +45,86 @@ const KIZLAR_CONTENT = {
     "En utanç verici hâlini grupta ilk kim gördü?",
     "Grupta kimin yanında kendini en özgür hissediyorsun?",
     "Hiç 'seni seviyorum' dediğin ama tam olarak arkadaşça kastetmediğin biri oldu mu?",
+    "Bu odadan biriyle hayatını takas edebilsen kiminkini seçerdin?",
+    "Bu odadaki biri hakkında söylediğin ve pişman olduğun bir şey var mı?",
+    "Kendini iyi göstermek için en yakın arkadaşın hakkında hiç yalan söyledin mi?",
+    "Sırf işine yaradığı için sürdürdüğün bir arkadaşlık oldu mu?",
+    "Hiç birini aldattın mı?",
+    "Eski sevgililerinden birine geri dönmek zorunda kalsan hangisini seçerdin?",
+    "Ailenin bilmediğine en çok memnun olduğun şey ne?",
+    "Aynanın karşısında öpüşme provası yaptın mı hiç?",
+    "Sevgili olarak kötü davrandığın bir dönemin oldu mu? Anlat.",
+    "Kimsenin bilmesini istemediğin gizli zevkin (guilty pleasure) ne?",
   ],
   dares: [
-    "Gruptaki birinin gözlerinin içine bakarak 30 saniye boyunca 'seni seviyorum' de — gülmek yasak.",
-    "Buradaki birinin telefonunu 1 dakika incele — izin vermezse sen shot at.",
+    {
+      text: "Ona gözlerinin içine bakarak 30 saniye boyunca 'seni seviyorum' de — gülmek yasak.",
+      target: true,
+    },
+    {
+      text: "Onun telefonunu 1 dakika incele — izin vermezse sen shot at.",
+      target: true,
+    },
     "Gruptaki en çekici bulduğun kişiyi söyle ve nedenini 1 dakika anlat.",
     "Bir arkadaşına 'sana bir şey söylemem lazım' de ve onun hakkındaki en dürüst düşünceni söyle.",
-    "Grupta biri seçsin: en utanç verici anını ona anlat.",
-    "Buradaki birinin taklidini 2 dakika yap — herkes kim olduğunu tahmin etsin.",
-    "Gruptaki birine 'seni kıskanıyorum' de ve nedenini açıkla.",
+    {
+      text: "Ona en utanç verici anını anlat — istediği kadar soru sorabilir.",
+      target: true,
+    },
+    {
+      text: "Onun taklidini 2 dakika yap — kimseye kim olduğunu söyleme, herkes tahmin etsin.",
+      secret: true,
+      target: true,
+    },
+    {
+      text: "Ona 'seni kıskanıyorum' de ve nedenini açıkla.",
+      target: true,
+    },
     "En son attığın flört mesajını sesli oku.",
-    "Gruptaki birine 1 dakika masaj yap — kabul etmezse sen shot at.",
-    "Grupta biri seçsin: onun en sevdiğin ve en sevmediğin yönünü söyle.",
+    {
+      text: "Ona 1 dakika masaj yap — kabul etmezse sen shot at.",
+      target: true,
+    },
+    {
+      text: "Onun en sevdiğin ve en sevmediğin yönünü söyle.",
+      target: true,
+    },
     "Gruptaki birine 'keşke daha yakın olsak' de ve ne demek istediğini açıkla.",
     "Telefonundaki son 5 mesajı sesli oku — sansür yok.",
-    "Gruptaki birine 30 saniye boyunca en dürüst komplimanını yap.",
+    {
+      text: "Ona 30 saniye boyunca en dürüst komplimanını yap.",
+      target: true,
+    },
     "Sevgilisi olan birini seç ve sevgilisi hakkında gerçekten ne düşündüğünü söyle.",
     "Gruptaki birine 'seni hiç hayal kırıklığına uğrattım mı?' diye sor ve cevabı sonuna kadar dinle.",
     "En utanç verici selfie'ni gruba göster.",
     "Gruptaki birine 'senin hakkında hiç dedikodu yaptım mı?' diye sor — cevabın evetse anlat.",
     "Buradaki birinin tarzını 1 dakika boyunca taklit et.",
     "Ex'inin veya crush'ının son fotoğrafını aç, gruba göster ve bir yorum yap.",
-    "Gruptaki birine 'sana hiç yalan söyledim mi?' diye sor — söylediysen itiraf et.",
-    "Grupta biri seçsin: onda en çekici bulduğun fiziksel özelliği söyle.",
+    {
+      text: "Ona 'sana hiç yalan söyledim mi?' diye sor — söylediysen itiraf et.",
+      target: true,
+    },
+    {
+      text: "Onda en çekici bulduğun fiziksel özelliği söyle.",
+      target: true,
+    },
     "En cüretkâr DM'ini gruba oku.",
     "Buradaki birinin konuşma tarzını 1 dakika taklit et.",
     "Telefonundaki arama geçmişinden bir kaydı seç ve hikâyesini anlat.",
-    "Buradaki birinin saçını veya makyajını 2 dakikada yeniden tasarla.",
+    {
+      text: "Onun saçını veya makyajını 2 dakikada yeniden tasarla.",
+      target: true,
+    },
     "En son attığın story'yi gruba göster.",
-    "Grupta biri seçsin: onunla ilgili en sevdiğin anıyı anlat.",
-    "Gruptaki birine 30 saniye boyunca hiç konuşmadan bak — herkes izlesin.",
+    {
+      text: "Onunla ilgili en sevdiğin anıyı anlat.",
+      target: true,
+    },
+    {
+      text: "Ona 30 saniye boyunca hiç konuşmadan bak — herkes izlesin.",
+      target: true,
+    },
     "En utanç verici fotoğrafını gruba göster.",
     "Buradaki birinin en komik anını canlandır.",
     {
@@ -92,14 +144,45 @@ const KIZLAR_CONTENT = {
     "Gruptaki birine 'senin yanında tamamen kendim olabiliyor muyum sence?' diye sor ve cevabı dinle.",
     "Google arama geçmişindeki en utanç verici aramanı söyle.",
     "Telefonundaki son screenshot'ı gruba göster.",
-    "Bir sonraki 2 tur boyunca gruptaki birinin elini tut.",
-    "Bir sonraki tur boyunca gruptaki birinin omzuna yaslanarak otur.",
-    "Gruptaki birine, onunla ilgili en çok merak ettiğin şeyi sor.",
-    "Gruptaki birine onu en son ne zaman kıskandığını dürüstçe anlat.",
+    {
+      text: "Bir sonraki 2 tur boyunca onun elini tut.",
+      target: true,
+    },
+    {
+      text: "Bir sonraki tur boyunca onun omzuna yaslanarak otur.",
+      target: true,
+    },
+    {
+      text: "Ona, onunla ilgili en çok merak ettiğin şeyi sor.",
+      target: true,
+    },
+    {
+      text: "Ona, onu en son ne zaman kıskandığını dürüstçe anlat.",
+      target: true,
+    },
     "Gruptaki birine 'seni gerçekten tanıyor muyum?' diye sor ve cevabını dinle.",
-    "Gruptaki birine onu en çok ne zaman özlediğini anlat.",
+    {
+      text: "Ona, onu en çok ne zaman özlediğini anlat.",
+      target: true,
+    },
     "Gruptaki birine, yanında kendini ne zaman en güvende hissettiğini anlat.",
     "Gruptaki birine 'benim en utanç verici hâlime ne zaman şahit oldun?' diye sor.",
     "Gruptaki birine ona kırıldığın ama söylemediğin bir anı anlat — yoksa en dürüst komplimanını yap.",
+    {
+      text: "Ona 30 saniyelik bir kucak dansı yap — yapamazsan shot at.",
+      target: true,
+    },
+    "Bir muzu olabildiğince baştan çıkarıcı şekilde ye.",
+    "Orgazm yüzünü göster — 5 saniye sabit kalsın.",
+    "1 dakika boyunca twerk yap.",
+    "En son mesajlaştığın 5 kişiyi ve son mesajlarınızı gruba göster.",
+    "Instagram DM listeni 30 saniye grup incelesin — mesajları açmak yok, sadece liste.",
+    {
+      text: "Ona kulağına bir sırrını fısılda — sadece o duysun.",
+      target: true,
+    },
+    "Telefonundaki en cringe kıyafetli fotoğrafını göster.",
+    "Kendini grubun önünde ağlatmaya çalış — 1 dakikan var.",
+    "Grup saçına istediği şekli versin — oyun bitene kadar öyle kal.",
   ],
 };

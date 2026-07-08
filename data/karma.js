@@ -1,6 +1,8 @@
 // Karma Ortam modu içeriği.
-// Her öğe düz metin (string) ya da { text, secret: true } olabilir.
+// Her öğe düz metin (string) ya da { text, secret, target } nesnesi olabilir.
 // secret: true → görev sadece sırası gelen oyuncuya gösterilir.
+// target: true → uygulama, sırası gelen dışından rastgele bir hedef kişi seçer;
+//                metinde o kişiden "o/ona/onun" diye bahset.
 const KARMA_CONTENT = {
   truths: [
     "Gruptaki en çekici bulduğun kişi kim?",
@@ -33,10 +35,28 @@ const KARMA_CONTENT = {
     "En son ne zaman birine 'gece gel' dedin?",
     "Bu gruptan bir çift çıkacak olsa, en yakışan ikili kim olurdu?",
     "İçten hissetmediğin hâlde 'seni özledim' dediğin oldu mu? Kime?",
+    "Instagram'da en son kimin profilini araştırdın?",
+    "Kimseye söylemediğin bir sırrın var mı? En azından bir ipucu ver.",
+    "Hiç sınavda kopya çektin mi? Yakalandın mı?",
+    "Bir realite şovuna katılmak zorunda kalsan hangisini seçerdin?",
+    "Karşındakinden seni bir anda soğutan şey (ick) ne?",
+    "Bir gecede en çok ne kadar para harcadın?",
+    "Şimdiye kadar aldığın en gereksiz şey neydi?",
+    "1'den 10'a kendi görünüşüne kaç puan verirsin?",
+    "Bu odadan biriyle evlenmek zorunda kalsan kim olurdu, neden?",
+    "İzlediğini itiraf etmeye utandığın dizi veya film ne?",
+    "Okulda hiç başın belaya girdi mi? Ne yüzünden?",
+    "En son kimi öptün?",
+    "Zombi kıyametinde bu gruptan kimi yanında isterdin?",
+    "Öğretmenlerinden birine hiç aşık oldun mu?",
+    "Toksik özelliğin ne?",
   ],
   dares: [
     "Telefonundaki son mesajı sesli oku.",
-    "Gruptaki birine 30 saniye boyunca kompliman yap.",
+    {
+      text: "Ona 30 saniye boyunca kompliman yap.",
+      target: true,
+    },
     "En son çektiğin selfie'yi göster.",
     "1 dakika boyunca en komik dansını yap.",
     {
@@ -46,26 +66,45 @@ const KARMA_CONTENT = {
     "Ex'inin veya crush'ının profiline gir, son fotoğrafına bir yorum yap — yapamazsan shot at.",
     "En utanç verici fotoğrafını gruba göster.",
     "Rehberinden rastgele birine 'merhaba' yaz — yazamazsan shot at.",
-    "Gruptaki birinin taklidini 2 dakika yap — herkes kim olduğunu tahmin etsin.",
+    {
+      text: "Onun taklidini 2 dakika yap — kimseye kim olduğunu söyleme, herkes tahmin etsin.",
+      secret: true,
+      target: true,
+    },
     "En son dinlediğin şarkıyı yüksek sesle söyle.",
-    "Gruptaki birine 'seni seviyorum' de — arkadaşça tabii.",
+    {
+      text: "Ona 'seni seviyorum' de — arkadaşça tabii.",
+      target: true,
+    },
     "Telefonundaki en son screenshot'ı göster.",
     {
       text: "Bir sonraki tur boyunca sadece fısıldayarak konuş. Nedenini soran olursa 'normal konuşuyorum ki' de.",
       secret: true,
     },
     "En sevdiğin pozunu ver — grup bir fotoğrafını çeksin.",
-    "Gruptaki birine 'gece gel' diye mesaj at — şaka olduğunu sonra açıklarsın.",
+    {
+      text: "Ona 'gece gel' diye mesaj at — şaka olduğunu sonra açıklarsın.",
+      target: true,
+    },
     "En son attığın story'yi gruba göster.",
     "1 dakika boyunca en cüretkâr bakışını yap — grup kime bakacağını seçsin.",
     "Telefonundaki arama geçmişinden bir kaydı seç ve hikâyesini anlat.",
     "Grupta biri seçsin: en utanç verici anını ona anlat.",
     "En son attığın emojiyi ve kime attığını söyle.",
-    "Gruptaki birinin saçını veya stilini 2 dakikada yeniden tasarla — malzeme yoksa shot at.",
+    {
+      text: "Onun saçını veya stilini 2 dakikada yeniden tasarla — malzeme yoksa shot at.",
+      target: true,
+    },
     "En son ne zaman ve neden ağladığını anlat.",
-    "Bir sonraki tur boyunca gruptaki birinin elini tut.",
+    {
+      text: "Bir sonraki tur boyunca onun elini tut.",
+      target: true,
+    },
     "En cüretkâr DM'ini gruba oku — istersen isimleri sansürle.",
-    "Gruptaki birini oturduğun yerden ara, 'seninle konuşmamız lazım' de ve açıklama yapmadan kapat.",
+    {
+      text: "Onu oturduğun yerden ara, 'seninle konuşmamız lazım' de ve açıklama yapmadan kapat.",
+      target: true,
+    },
     "En son attığın ses kaydını gruba dinlet.",
     "1 dakika boyunca en komik yürüyüşünü yap.",
     "Gruptaki en çekici bulduğun kişiye 10 saniye boyunca bak — bakamazsan shot at.",
@@ -74,7 +113,10 @@ const KARMA_CONTENT = {
       secret: true,
     },
     "Google arama geçmişindeki en utanç verici aramanı söyle.",
-    "Gruptaki birine 1 dakika masaj yap — kabul etmezse sen shot at.",
+    {
+      text: "Ona 1 dakika masaj yap — kabul etmezse sen shot at.",
+      target: true,
+    },
     "En son 'seni özledim' dediğin kişinin kim olduğunu söyle ve hikâyesini anlat.",
     "Telefonundaki en eski fotoğrafı göster.",
     "Gruptaki birinin yürüyüşünü ve konuşmasını 1 dakika taklit et.",
@@ -82,5 +124,30 @@ const KARMA_CONTENT = {
       text: "Bir sonraki tur boyunca kurduğun her cümleye 'valla' kelimesini sıkıştır — kimse fark etmesin. Yakalanırsan shot!",
       secret: true,
     },
+    "Ekran süresi raporunu herkese göster.",
+    "Çantanı veya cüzdanını boşalt, herkes içindekilere baksın.",
+    {
+      text: "Bir sonraki turun sonuna kadar o ol — konuşması, oturuşu, her şeyiyle.",
+      target: true,
+    },
+    "Gözlerini kapat — grup mutfaktan seçtiği bir şeyi sana tattırsın.",
+    "Aklına gelen ilk kelimeyi olanca sesinle bağır.",
+    "10 dakika boyunca gülmek yasak — grup seni güldürmeye çalışacak.",
+    "Bir tur boyunca dublaj Türkçesiyle konuş — film fragmanı sesi gibi.",
+    "Gruptaki herkese beş yıl sonra nerede olacağını tahmin et.",
+    "Herkese bir ünlü benzerini söyle.",
+    "2 dakika boyunca hayali gitar çal — şarkıyı da mırıldan.",
+    "Müzik olmadan 2 dakika dans et.",
+    {
+      text: "Ona bir serenat yap — en az bir kıta.",
+      target: true,
+    },
+    {
+      text: "Önümüzdeki 10 dakika içinde onu korkutup zıplatmaya çalış — ama belli etme!",
+      secret: true,
+      target: true,
+    },
+    "Bir sonraki doğruluk cevabını ağzında içki varken gargara yaparak ver.",
+    "İki doğru bir yalan söyle — grup hangisinin yalan olduğunu bulsun.",
   ],
 };

@@ -26,6 +26,7 @@
     choicePanel: document.getElementById('choice-panel'),
     cardPanel: document.getElementById('card-panel'),
     cardType: document.getElementById('card-type'),
+    cardTarget: document.getElementById('card-target'),
     cardText: document.getElementById('card-text'),
     btnNext: document.getElementById('btn-next'),
     secretWarning: document.getElementById('secret-warning'),
@@ -47,11 +48,17 @@
     return state.mode === 'kizlar' ? KIZLAR_CONTENT : KARMA_CONTENT;
   }
 
-  // Kart öğeleri düz metin veya { text, secret } olabilir — tek biçime çevir.
+  // Kart öğeleri düz metin veya { text, secret, target } olabilir — tek biçime çevir.
+  // target: true → uygulama, sırası gelen dışından rastgele bir hedef oyuncu seçer.
   function normalizeCard(item) {
     return typeof item === 'string'
-      ? { text: item, secret: false }
-      : { text: item.text, secret: Boolean(item.secret) };
+      ? { text: item, secret: false, target: false }
+      : { text: item.text, secret: Boolean(item.secret), target: Boolean(item.target) };
+  }
+
+  function pickTargetPlayer() {
+    const others = state.players.filter((_, i) => i !== state.currentPlayerIndex);
+    return others[Math.floor(Math.random() * others.length)];
   }
 
   function pickRandom(arr, usedKey) {
@@ -132,6 +139,7 @@
     els.cardPanel.classList.add('hidden');
     els.secretWarning.classList.add('hidden');
     els.secretNote.classList.add('hidden');
+    els.cardTarget.classList.add('hidden');
     els.btnNext.classList.add('hidden');
     els.cardPanel.classList.remove('card-panel--truth', 'card-panel--dare', 'card-panel--secret');
   }
@@ -158,6 +166,7 @@
         : pickRandom(content.dares, 'usedDares');
 
     state.currentCard = { ...card, type };
+    if (card.target) state.currentCard.targetName = pickTargetPlayer();
     els.choicePanel.classList.add('hidden');
     els.btnNext.classList.add('hidden');
 
@@ -179,6 +188,11 @@
     els.cardType.textContent = card.type === 'truth' ? 'DOĞRULUK' : 'CESARET';
     els.cardText.textContent = card.text;
 
+    if (card.targetName) {
+      els.cardTarget.textContent = `🎯 Seçilen kişi: ${card.targetName}`;
+      els.cardTarget.classList.remove('hidden');
+    }
+
     if (card.secret) {
       els.cardPanel.classList.add('card-panel--secret');
       els.cardType.textContent = 'GİZLİ GÖREV';
@@ -186,11 +200,12 @@
     }
   }
 
-  // Kart kapatılırken gizli görev metnini sil ki telefon elden ele
-  // dolaşırken kimse görmesin.
+  // Kart kapatılırken gizli görev metnini ve hedef ismini sil ki telefon
+  // elden ele dolaşırken kimse görmesin.
   function concealSecret(message) {
     els.cardText.textContent = message;
     els.secretNote.classList.add('hidden');
+    els.cardTarget.classList.add('hidden');
   }
 
   function nextPlayer() {
@@ -276,6 +291,7 @@
   document.getElementById('btn-shot').addEventListener('click', () => {
     if (state.currentCard && state.currentCard.secret) {
       els.secretNote.classList.add('hidden');
+      els.cardTarget.classList.add('hidden');
     }
     els.cardText.textContent = '🥃 Shot attın! Sonraki oyuncuya geç.';
     els.btnNext.classList.remove('hidden');
