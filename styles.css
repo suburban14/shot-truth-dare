@@ -576,6 +576,26 @@ body {
   gap: 10px;
 }
 
+/* Oylama */
+.vote-panel {
+  background: rgba(168, 85, 247, 0.1);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  animation: pop 0.35s ease;
+}
+
+.vote-type {
+  background: rgba(168, 85, 247, 0.2);
+  color: var(--purple);
+}
+
+.vote-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: -12px 0 20px;
+}
+
 /* Gizli görev */
 .secret-warning {
   text-align: center;

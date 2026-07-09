@@ -181,4 +181,18 @@ const KARMA_CONTENT = {
     },
     "Telefonunu çıkar: herkes en kötü pozunu versin, grup fotoğrafı çek — silmek yok, gecenin anısı.",
   ],
+  votes: [
+    "Üçe kadar say: herkes gecenin en çok trip atanını göstersin — en çok oyu alan shot atar!",
+    "Herkes en çok telefonuyla oynayanı göstersin — en çok oyu alan shot atar!",
+    "Herkes buradaki en kötü dansçıyı göstersin — en çok oyu alan dans ederek shot atar!",
+    "Herkes 'partiden ilk kaçacak kişi'yi göstersin — en çok oyu alan shot atar!",
+    "Herkes en çok flört edeni göstersin — en çok oyu alan shot atar!",
+    "Herkes 'yarın en fena akşamdan kalma olacak' dediğini göstersin — en çok oyu alan şimdiden bir shot daha atar!",
+    "Herkes grubun en cimrisini göstersin — en çok oyu alan bir sonraki içkileri tazeler!",
+    "Herkes mesajlara en geç dönen kişiyi göstersin — en çok oyu alan shot atar!",
+    "Herkes 'en abartılı story atan'ı göstersin — en çok oyu alan shot atar!",
+    "Herkes grupta sesi en yüksek olanı göstersin — en çok oyu alan bu turu fısıldayarak geçirir!",
+    "Herkes 'kesin ünlü olur' dediğini göstersin — en çok oyu alan ayağa kalkıp teşekkür konuşması yapar!",
+    "Herkes gecenin en komiğini göstersin — en çok oyu alan, seçtiği birine shot attırır!",
+  ],
 };

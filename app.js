@@ -6,6 +6,8 @@
     currentPlayerIndex: 0,
     usedTruths: { kizlar: [], karma: [] },
     usedDares: { kizlar: [], karma: [] },
+    usedVotes: { kizlar: [], karma: [] },
+    turnsSinceVote: 0,
     currentCard: null,
   };
 
@@ -29,6 +31,8 @@
     cardTarget: document.getElementById('card-target'),
     cardText: document.getElementById('card-text'),
     btnDone: document.getElementById('btn-done'),
+    votePanel: document.getElementById('vote-panel'),
+    voteText: document.getElementById('vote-text'),
     secretWarning: document.getElementById('secret-warning'),
     secretPlayerName: document.getElementById('secret-player-name'),
     secretNote: document.getElementById('secret-note'),
@@ -63,12 +67,28 @@
         STORAGE_KEY,
         JSON.stringify({
           lengths: {
-            kizlar: { truths: KIZLAR_CONTENT.truths.length, dares: KIZLAR_CONTENT.dares.length },
-            karma: { truths: KARMA_CONTENT.truths.length, dares: KARMA_CONTENT.dares.length },
+            kizlar: {
+              truths: KIZLAR_CONTENT.truths.length,
+              dares: KIZLAR_CONTENT.dares.length,
+              votes: KIZLAR_CONTENT.votes.length,
+            },
+            karma: {
+              truths: KARMA_CONTENT.truths.length,
+              dares: KARMA_CONTENT.dares.length,
+              votes: KARMA_CONTENT.votes.length,
+            },
           },
           used: {
-            kizlar: { truths: state.usedTruths.kizlar, dares: state.usedDares.kizlar },
-            karma: { truths: state.usedTruths.karma, dares: state.usedDares.karma },
+            kizlar: {
+              truths: state.usedTruths.kizlar,
+              dares: state.usedDares.kizlar,
+              votes: state.usedVotes.kizlar,
+            },
+            karma: {
+              truths: state.usedTruths.karma,
+              dares: state.usedDares.karma,
+              votes: state.usedVotes.karma,
+            },
           },
         })
       );
@@ -88,6 +108,9 @@
         }
         if (saved.lengths[mode].dares === content.dares.length) {
           state.usedDares[mode] = saved.used[mode].dares;
+        }
+        if (saved.lengths[mode].votes === content.votes.length && saved.used[mode].votes) {
+          state.usedVotes[mode] = saved.used[mode].votes;
         }
       });
     } catch (e) {
@@ -185,10 +208,29 @@
     state.currentCard = null;
     els.choicePanel.classList.remove('hidden');
     els.cardPanel.classList.add('hidden');
+    els.votePanel.classList.add('hidden');
     els.secretWarning.classList.add('hidden');
     els.secretNote.classList.add('hidden');
     els.cardTarget.classList.add('hidden');
     els.cardPanel.classList.remove('card-panel--truth', 'card-panel--dare', 'card-panel--secret');
+  }
+
+  // Oylama araya sürpriz olarak girer: en az 3 oyuncu varken, son oylamadan
+  // en az 3 tur geçtiyse ~%25 ihtimalle. Sırası gelen kartı okur, herkes oylar,
+  // sonra aynı oyuncu normal turuna devam eder.
+  function shouldShowVote() {
+    if (state.players.length < 3) return false;
+    if (getContent().votes.length === 0) return false;
+    if (state.turnsSinceVote < 3) return false;
+    return Math.random() < 0.25;
+  }
+
+  function showVote() {
+    const card = pickRandom(getContent().votes, 'usedVotes');
+    state.turnsSinceVote = 0;
+    els.choicePanel.classList.add('hidden');
+    els.votePanel.classList.remove('hidden');
+    els.voteText.textContent = card.text;
   }
 
   function updateTurnDisplay() {
@@ -250,6 +292,7 @@
 
   function nextPlayer() {
     state.currentPlayerIndex++;
+    state.turnsSinceVote++;
 
     if (state.currentPlayerIndex >= state.players.length) {
       state.currentPlayerIndex = 0;
@@ -264,6 +307,7 @@
     }
 
     updateTurnDisplay();
+    if (shouldShowVote()) showVote();
   }
 
   function startGame() {
@@ -325,4 +369,10 @@
   // Ekran anında sıfırlandığı için gizli görev metni de kimseye görünmez.
   els.btnDone.addEventListener('click', nextPlayer);
   document.getElementById('btn-shot').addEventListener('click', nextPlayer);
+
+  // Oylama bitti → aynı oyuncu normal turuna devam eder.
+  document.getElementById('btn-vote-done').addEventListener('click', () => {
+    els.votePanel.classList.add('hidden');
+    els.choicePanel.classList.remove('hidden');
+  });
 })();

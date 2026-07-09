@@ -220,4 +220,18 @@ const KIZLAR_CONTENT = {
     },
     "Gruptaki herkese tarzından yola çıkarak birer uydurma 'burç yorumu' yap.",
   ],
+  votes: [
+    "Üçe kadar say: herkes gecenin en çok trip atanını göstersin — en çok oyu alan shot atar!",
+    "Herkes en çok dedikodu yapanı göstersin — en çok oyu alan shot atar!",
+    "Herkes 'sevgilisine en düşkün' olanı göstersin — en çok oyu alan shot atar!",
+    "Herkes grubun en boşboğazını göstersin — en çok oyu alan shot atar!",
+    "Herkes en stil sahibi olanı göstersin — en çok oyu alan podyum yürüyüşü yapar, gerisi alkışlar!",
+    "Herkes 'ex'ine mesaj atmaya en yakın' olanı göstersin — en çok oyu alan hem shot atar hem telefonunu bu tur ortaya koyar!",
+    "Herkes en çok naz yapanı göstersin — en çok oyu alan shot atar!",
+    "Herkes 'aramızdan ilk evlenecek' dediğini göstersin — en çok oyu alan hayali nikâh konuşması yapar!",
+    "Herkes gecenin en komiğini göstersin — en çok oyu alan, seçtiği birine shot attırır!",
+    "Herkes grubun en kıskancını göstersin — en çok oyu alan shot atar!",
+    "Herkes 'en çok crush değiştiren'i göstersin — en çok oyu alan shot atar!",
+    "Herkes grubun anaçını göstersin — en çok oyu alan herkesin içkisini tazeler!",
+  ],
 };
