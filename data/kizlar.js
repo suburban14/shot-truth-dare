@@ -55,6 +55,17 @@ const KIZLAR_CONTENT = {
     "Aynanın karşısında öpüşme provası yaptın mı hiç?",
     "Sevgili olarak kötü davrandığın bir dönemin oldu mu? Anlat.",
     "Kimsenin bilmesini istemediğin gizli zevkin (guilty pleasure) ne?",
+    "Söylediğin son yalanı itiraf et — küçücük olsa bile.",
+    "Birinde çekici bulduğun en garip şey ne?",
+    "Hiç birinin profilini derinlemesine stalk'ladın mı — ex, crush, arkadaş? En fazla ne kadar ileri gittin?",
+    "Buradaki birinin aklını 5 dakika okuyabilseydin kimi seçerdin, neden?",
+    "Ailene söylediğin ve asla öğrenmedikleri en büyük yalan neydi?",
+    "Çiğnediğin bir ilişki kuralı neydi — tekrar çiğner miydin?",
+    "Flört etmeye çalışırken ağzından çıkan en cringe cümle neydi?",
+    "Buradakilerden sır konusunda en az güvendiğin kim?",
+    "Aynı gün içinde birden fazla kişiyle öpüştüğün oldu mu?",
+    "Doktora gittiğin en utanç verici sorun neydi?",
+    "Bir randevuda yaptığın, hatırlayınca hâlâ yerin dibine girdiğin şey ne?",
   ],
   dares: [
     {
@@ -219,6 +230,84 @@ const KIZLAR_CONTENT = {
       target: true,
     },
     "Gruptaki herkese tarzından yola çıkarak birer uydurma 'burç yorumu' yap.",
+    {
+      text: "Ona, onu ilk gördüğünde hakkında ne düşündüğünü dürüstçe söyle.",
+      target: true,
+    },
+    "Mesajlaştığın son kişiye komik bir surat ifadesiyle çektiğin selfie'ni gönder.",
+    "Buradaki herkesi zombi kıyametinde hayatta kalma ihtimaline göre sırala — en yüksekten en düşüğe, gerekçeleriyle!",
+    "'İyiyim' cümlesini beş farklı dramatik tonda söyle.",
+    "Birini reddediyormuş gibi yap — ama agresif derecede kibar ol.",
+    "Ayağa kalk ve grubun seçtiği herhangi bir şeye dramatik bir kadeh kaldırma konuşması yap.",
+    {
+      text: "Ya ex'ine dair telefonda kalan son şeyi (mesaj, foto, ne varsa) göster ya da 2 shot at!",
+      double: true,
+    },
+    {
+      text: "Ya crush'ının profilini açıp gruba göster ya da 2 shot at!",
+      double: true,
+    },
+    {
+      text: "Ya buradaki birine en derin sırlarından birini fısılda ya da 2 shot at!",
+      double: true,
+    },
+    {
+      text: "Ya galerinden grubun seçtiği bir fotoğrafın hikâyesini anlat ya da 2 shot at!",
+      double: true,
+    },
+    {
+      text: "Ya en yakın arkadaşına 'sana söylemem gereken bir şey var' yaz ya da 2 shot at! (Cevap gelince 'yanlışlıkla gitti' dersin 😌)",
+      double: true,
+    },
+    {
+      text: "Ya en son attığın DM'i gruba göster ya da 2 shot at!",
+      double: true,
+    },
+    {
+      text: "Ya sevgiline veya crush'ına bağlamsız bir kalp emojisi at ya da 2 shot at!",
+      double: true,
+    },
+    {
+      text: "Ya crush'ının baş harfini söyle ya da 2 shot at!",
+      double: true,
+    },
+    {
+      text: "Ona telefonundan 'sana bir itirafım var...' yaz. Cevap gelene kadar konuyu açma; sorunca 'yanlış kişiye gitmiş' de.",
+      secret: true,
+      target: true,
+    },
+    {
+      text: "Önümüzdeki 2 tur içinde 'dün gece rüyamda buradakilerden birini gördüm' de — kim olduğunu asla söyleme.",
+      secret: true,
+    },
+    {
+      text: "Onun bir sonraki doğruluk cevabından sonra 'bence hepsini anlatmadı' deyip gülümse. Açıklama yok.",
+      secret: true,
+      target: true,
+    },
+    {
+      text: "Bu tur içinde bir kez telefonuna bak, 'inanmıyorum...' diye mırıldan ve telefonu ters çevir. Soran olursa 'hiçbir şey' de.",
+      secret: true,
+    },
+    {
+      text: "Önümüzdeki 10 dakika içinde üç kez ona adıyla seslenip cümleni yarıda kes ('...yok, boş ver'). Ne diyeceğini asla söyleme.",
+      secret: true,
+      target: true,
+    },
+    {
+      text: "Bu turdan itibaren onun içkisi her azaldığında 'tazeleyeyim mi canım?' diye sor — neden bu kadar ilgilendiğini açıklama.",
+      secret: true,
+      target: true,
+    },
+    {
+      text: "Herkes ciddi bir şey konuşurken derin bir iç çek ve 'neyse...' de. Konuyu asla açma.",
+      secret: true,
+    },
+    {
+      text: "Ona 'bu gece sende bir şeyler farklı, değil mi?' de ve cevabını beklemeden konuyu değiştir.",
+      secret: true,
+      target: true,
+    },
   ],
   votes: [
     "Üçe kadar say: herkes gecenin en çok trip atanını göstersin — en çok oyu alan shot atar!",
@@ -233,5 +322,18 @@ const KIZLAR_CONTENT = {
     "Herkes grubun en kıskancını göstersin — en çok oyu alan shot atar!",
     "Herkes 'en çok crush değiştiren'i göstersin — en çok oyu alan shot atar!",
     "Herkes grubun anaçını göstersin — en çok oyu alan herkesin içkisini tazeler!",
+    "Herkes 'crush'ına hep ilk yazan taraf' olanı göstersin — en çok oyu alan shot atar!",
+    "Herkes en iyi makyaj yapanı göstersin — en çok oyu alan, gözleri kapalı birine ruj sürer!",
+    "Herkes 'story'si en estetik' olanı göstersin — en çok oyu alan shot atar!",
+    "Herkes 'ex'ine döner' dediğini göstersin — en çok oyu alan shot atar!",
+    "Herkes 'sırrımı ona emanet ederim' dediğini göstersin — hiç oy alamayanlar shot atar!",
+    "Herkes 'düğününde en çok ağlayacak' olanı göstersin — en çok oyu alan shot atar!",
+    "Herkes 'en pahalı zevkleri olan'ı göstersin — en çok oyu alan shot atar!",
+    "Herkes 'sabaha kadar telefonda konuşulur' dediğini göstersin — en çok oyu alan shot atar!",
+    "Herkes 'kıskançlıkta şampiyon' olanı göstersin — en çok oyu alan shot atar!",
+    "Herkes 'flörtte en cesur' olanı göstersin — en çok oyu alan crush'ının baş harfini söyler!",
+    "Herkes grubun en dramatiğini göstersin — en çok oyu alan bu turu dizi oyuncusu gibi geçirir!",
+    "Herkes 'gece 3'te aranacak kişi'yi göstersin — en çok oyu alan herkese içki tazeler!",
+    "Herkes grubun dedikodu merkezini göstersin — en çok oyu alan shot atar ve son duyduğu dedikoduyu isim vermeden anlatır!",
   ],
 };

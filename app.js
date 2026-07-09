@@ -36,6 +36,7 @@
     cardTarget: document.getElementById('card-target'),
     cardText: document.getElementById('card-text'),
     btnDone: document.getElementById('btn-done'),
+    btnShot: document.getElementById('btn-shot'),
     btnTimer: document.getElementById('btn-timer'),
     btnJoker: document.getElementById('btn-joker'),
     votePanel: document.getElementById('vote-panel'),
@@ -215,12 +216,18 @@
     }
   }
 
-  // Kart öğeleri düz metin veya { text, secret, target } olabilir — tek biçime çevir.
+  // Kart öğeleri düz metin veya { text, secret, target, double } olabilir — tek biçime çevir.
   // target: true → uygulama, sırası gelen dışından rastgele bir hedef oyuncu seçer.
+  // double: true → 'ya bu ya 2 shot' kartı; shot butonu 2 shot sayar.
   function normalizeCard(item) {
     return typeof item === 'string'
-      ? { text: item, secret: false, target: false }
-      : { text: item.text, secret: Boolean(item.secret), target: Boolean(item.target) };
+      ? { text: item, secret: false, target: false, double: false }
+      : {
+          text: item.text,
+          secret: Boolean(item.secret),
+          target: Boolean(item.target),
+          double: Boolean(item.double),
+        };
   }
 
   function pickTargetPlayer() {
@@ -454,6 +461,7 @@
     els.cardType.textContent = card.type === 'truth' ? 'DOĞRULUK' : 'CESARET';
     els.cardText.textContent = card.text;
     els.btnDone.textContent = card.type === 'truth' ? 'Cevapladım ✓' : 'Yaptım ✓';
+    els.btnShot.textContent = card.double ? '2 Shot at 🥃🥃' : 'Shot at 🥃';
     playSound('flip');
 
     if (card.targetName) {
@@ -668,9 +676,10 @@
 
   // Shot da 'Yaptım' gibi anında sıradaki oyuncuya geçer — bekleme ve
   // konfeti yok; telefonlarda takılmaya yol açıyordu.
-  document.getElementById('btn-shot').addEventListener('click', () => {
+  // 'Ya bu ya 2 shot' kartlarında sayaca 2 shot işlenir.
+  els.btnShot.addEventListener('click', () => {
     const st = cardOwnerStats();
-    if (st) st.shots++;
+    if (st) st.shots += state.currentCard && state.currentCard.double ? 2 : 1;
     playSound('pop');
     vibrate([30, 40, 30]);
     nextPlayer();
