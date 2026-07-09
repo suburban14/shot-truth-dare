@@ -1,4 +1,4 @@
-// Karma Ortam modu içeriği.
+// Full Ekip modu içeriği (kod içi anahtarı: karma).
 // Her öğe düz metin (string) ya da { text, secret, target } nesnesi olabilir.
 // secret: true → görev sadece sırası gelen oyuncuya gösterilir.
 // target: true → uygulama, sırası gelen dışından rastgele bir hedef kişi seçer;

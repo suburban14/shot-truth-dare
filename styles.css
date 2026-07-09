@@ -592,6 +592,19 @@ body {
   animation: pop 0.3s ease;
 }
 
+.card-owner {
+  display: inline-block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--pink);
+  background: rgba(255, 77, 141, 0.12);
+  border: 1px solid rgba(255, 77, 141, 0.4);
+  border-radius: 999px;
+  padding: 6px 14px;
+  margin: 0 8px 14px 0;
+  animation: pop 0.3s ease;
+}
+
 .card-text {
   font-size: 1.15rem;
   line-height: 1.55;

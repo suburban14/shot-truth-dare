@@ -32,6 +32,7 @@
     choicePanel: document.getElementById('choice-panel'),
     cardPanel: document.getElementById('card-panel'),
     cardType: document.getElementById('card-type'),
+    cardOwner: document.getElementById('card-owner'),
     cardTarget: document.getElementById('card-target'),
     cardText: document.getElementById('card-text'),
     btnDone: document.getElementById('btn-done'),
@@ -51,7 +52,7 @@
 
   const MODE_LABELS = {
     kizlar: { name: 'Kızlar Gecesi', class: 'mode-badge--kizlar' },
-    karma: { name: 'Karma Ortam', class: 'mode-badge--karma' },
+    karma: { name: 'Full Ekip', class: 'mode-badge--karma' },
   };
 
   function showScreen(name) {
@@ -381,6 +382,7 @@
     els.secretWarning.classList.add('hidden');
     els.secretNote.classList.add('hidden');
     els.cardTarget.classList.add('hidden');
+    els.cardOwner.classList.add('hidden');
     els.btnTimer.classList.add('hidden');
     els.cardPanel.classList.remove('card-panel--truth', 'card-panel--dare', 'card-panel--secret');
   }
@@ -438,7 +440,7 @@
         ? pickRandom(content.truths, 'usedTruths')
         : pickRandom(content.dares, 'usedDares');
 
-    state.currentCard = { ...card, type };
+    state.currentCard = { ...card, type, ownerName: currentPlayerName() };
     state.cardsDrawn++;
     if (card.target) state.currentCard.targetName = pickTargetPlayer();
     els.choicePanel.classList.add('hidden');
@@ -661,8 +663,15 @@
 
   // Cevapladım/Yaptım veya Shot → doğrudan sıradaki oyuncuya geç.
   // Ekran anında sıfırlandığı için gizli görev metni de kimseye görünmez.
+  // İstatistik, kartı fiilen yapan kişiye işlenir — joker ile devredildiyse
+  // yeni sahibine, yoksa sırası gelen oyuncuya.
+  function cardOwnerStats() {
+    const owner = (state.currentCard && state.currentCard.ownerName) || currentPlayerName();
+    return state.stats[owner];
+  }
+
   els.btnDone.addEventListener('click', () => {
-    const st = state.stats[currentPlayerName()];
+    const st = cardOwnerStats();
     if (st && state.currentCard) {
       if (state.currentCard.type === 'truth') st.truths++;
       else st.dares++;
@@ -671,7 +680,7 @@
   });
 
   document.getElementById('btn-shot').addEventListener('click', () => {
-    const st = state.stats[currentPlayerName()];
+    const st = cardOwnerStats();
     if (st) st.shots++;
     playSound('pop');
     vibrate([30, 40, 30]);
@@ -679,13 +688,34 @@
     nextPlayer();
   });
 
-  // Joker: oyuncu başına oyunda 1 kez, aynı türden yeni kart çeker.
+  // Joker: oyuncu başına oyunda 1 kez — kartını rastgele birine devreder,
+  // bedeli bir shot (otomatik sayaca işlenir).
   els.btnJoker.addEventListener('click', () => {
     const st = state.stats[currentPlayerName()];
     if (!st || st.jokerUsed || !state.currentCard) return;
     st.jokerUsed = true;
-    showToast('🃏 Joker kullanıldı — bir yudum iç!');
-    showCard(state.currentCard.type);
+    st.shots++;
+
+    const others = state.players.filter((n) => n !== currentPlayerName());
+    const newOwner = others[Math.floor(Math.random() * others.length)];
+    state.currentCard.ownerName = newOwner;
+
+    // Kartın hedefi yeni sahibinin kendisiyse hedefi yeniden seç.
+    if (state.currentCard.targetName === newOwner) {
+      const rest = state.players.filter((n) => n !== newOwner);
+      state.currentCard.targetName = rest[Math.floor(Math.random() * rest.length)];
+      els.cardTarget.textContent = `🎯 Seçilen kişi: ${state.currentCard.targetName}`;
+    }
+
+    els.cardOwner.textContent = `🃏 Kartın yeni sahibi: ${newOwner}`;
+    els.cardOwner.classList.remove('hidden');
+    els.btnJoker.classList.add('hidden');
+    els.btnDone.textContent = state.currentCard.type === 'truth' ? 'Cevapladı ✓' : 'Yaptı ✓';
+    showToast(`🃏 Yeni sahibi: ${newOwner} — sen bir shot at!`);
+    playSound('pop');
+    vibrate([30, 40, 30]);
+    confettiBurst();
+    renderChips();
   });
 
   els.btnTimer.addEventListener('click', toggleTimer);
