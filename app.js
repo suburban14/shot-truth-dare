@@ -152,7 +152,10 @@
     const colors = ['#ff4d8d', '#a855f7', '#ffd166', '#6ee7b7', '#fb7185', '#ff9f1c'];
     const wrap = document.createElement('div');
     wrap.className = 'confetti';
-    wrap.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:55;overflow:hidden;';
+    // inset:0 kısayolu eski iOS'ta desteklenmiyor — katman sıfır boyutlu
+    // kalıp parçacıkları kırpıyordu; kenarlar tek tek verilir.
+    wrap.style.cssText =
+      'position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:55;overflow:hidden;';
     document.body.appendChild(wrap);
 
     let x = window.innerWidth / 2;
@@ -700,13 +703,7 @@
     return state.stats[owner];
   }
 
-  // Shot'ta geçiş bir sonraki kareye ertelenir: konfeti ve buton geri
-  // bildirimi önce çizilsin, telefonda dokunma anı donmasın. Bekleme
-  // sırasında ikinci bir dokunma turu iki kez ilerletmesin diye korumalı.
-  let shotAdvancePending = false;
-
   els.btnDone.addEventListener('click', () => {
-    if (shotAdvancePending) return;
     const st = cardOwnerStats();
     if (st && state.currentCard) {
       if (state.currentCard.type === 'truth') st.truths++;
@@ -715,24 +712,19 @@
     nextPlayer();
   });
 
+  // Shot da 'Yaptım' gibi anında sıradaki oyuncuya geçer — bekleme ve
+  // konfeti yok; telefonlarda takılmaya yol açıyordu.
   document.getElementById('btn-shot').addEventListener('click', () => {
-    if (shotAdvancePending) return;
-    shotAdvancePending = true;
     const st = cardOwnerStats();
     if (st) st.shots++;
     playSound('pop');
     vibrate([30, 40, 30]);
-    confettiBurst(document.getElementById('btn-shot'));
-    setTimeout(() => {
-      shotAdvancePending = false;
-      nextPlayer();
-    }, 120);
+    nextPlayer();
   });
 
   // Joker: oyuncu başına oyunda 1 kez — kartını rastgele birine devreder,
   // bedeli bir shot (otomatik sayaca işlenir).
   els.btnJoker.addEventListener('click', () => {
-    if (shotAdvancePending) return;
     const st = state.stats[currentPlayerName()];
     if (!st || st.jokerUsed || !state.currentCard) return;
     st.jokerUsed = true;
@@ -756,7 +748,6 @@
     showToast(`🃏 Yeni sahibi: ${newOwner} — sen bir shot at!`);
     playSound('pop');
     vibrate([30, 40, 30]);
-    confettiBurst(els.btnJoker);
     renderChips();
   });
 
