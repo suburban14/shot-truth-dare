@@ -832,8 +832,6 @@ body {
   padding: 14px;
 }
 
-/* Konfeti: tüm stiller app.js içinde satır içi verilir (önbellek uyumu). */
-
 /* Toast */
 .toast {
   position: fixed;

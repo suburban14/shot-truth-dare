@@ -143,51 +143,6 @@
   // telefonlarda dokunma anını donduruyor.
   document.addEventListener('pointerdown', () => playSound('init'), { once: true });
 
-  // Konfeti Web Animations API ile sürülür: Safari, @keyframes içindeki CSS
-  // değişkenlerini güvenilir okumadığı için animasyon JS'ten veriliyor.
-  // Önemli: parçacıklar önce DOM'a eklenir, animasyon sonra başlatılır —
-  // Safari, sayfada olmayan elemanın animasyonunu çalıştırmıyor. Stiller de
-  // eski CSS önbellekte kalsa bile çalışsın diye satır içi verilir.
-  function confettiBurst(originEl) {
-    const colors = ['#ff4d8d', '#a855f7', '#ffd166', '#6ee7b7', '#fb7185', '#ff9f1c'];
-    const wrap = document.createElement('div');
-    wrap.className = 'confetti';
-    // inset:0 kısayolu eski iOS'ta desteklenmiyor — katman sıfır boyutlu
-    // kalıp parçacıkları kırpıyordu; kenarlar tek tek verilir.
-    wrap.style.cssText =
-      'position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:55;overflow:hidden;';
-    document.body.appendChild(wrap);
-
-    let x = window.innerWidth / 2;
-    let y = window.innerHeight * 0.55;
-    if (originEl) {
-      const rect = originEl.getBoundingClientRect();
-      x = rect.left + rect.width / 2;
-      y = rect.top + rect.height / 2;
-    }
-
-    for (let i = 0; i < 28; i++) {
-      const p = document.createElement('i');
-      p.style.cssText =
-        `position:absolute;left:${x - 4}px;top:${y - 6}px;width:8px;height:13px;` +
-        `border-radius:2px;background:${colors[i % colors.length]};`;
-      wrap.appendChild(p);
-      if (p.animate) {
-        const dx = (Math.random() * 2 - 1) * 180;
-        const dy = Math.random() * 320 - 240;
-        const rot = Math.random() * 720 - 360;
-        p.animate(
-          [
-            { transform: 'translate(0, 0) rotate(0deg) scale(1)', opacity: 1 },
-            { transform: `translate(${dx}px, ${dy}px) rotate(${rot}deg) scale(0.7)`, opacity: 0 },
-          ],
-          { duration: 900 + Math.random() * 300, easing: 'cubic-bezier(0.2, 0.6, 0.3, 1)', fill: 'forwards' }
-        );
-      }
-    }
-    setTimeout(() => wrap.remove(), 1300);
-  }
-
   function showToast(msg) {
     const toast = document.createElement('div');
     toast.className = 'toast';
@@ -650,7 +605,6 @@
 
     showScreen('summary');
     playSound('fanfare');
-    confettiBurst();
   }
 
   // ---------- Olaylar ----------
