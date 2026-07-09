@@ -141,7 +141,6 @@ const KARMA_CONTENT = {
       text: "Bir sonraki tur boyunca kurduğun her cümleye 'valla' kelimesini sıkıştır — kimse fark etmesin. Yakalanırsan shot!",
       secret: true,
     },
-    "Ekran süresi raporunu herkese göster.",
     "Çantanı veya cüzdanını boşalt, herkes içindekilere baksın.",
     {
       text: "Bir sonraki turun sonuna kadar o ol — konuşması, oturuşu, her şeyiyle.",
