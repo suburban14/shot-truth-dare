@@ -121,10 +121,7 @@ const KARMA_CONTENT = {
       target: true,
     },
     "En cüretkâr DM'ini gruba oku — istersen isimleri sansürle.",
-    {
-      text: "Onu oturduğun yerden ara, 'seninle konuşmamız lazım' de ve açıklama yapmadan kapat.",
-      target: true,
-    },
+    "Rehberinden birini ara, 'seninle konuşmamız lazım' de ve açıklama yapmadan kapat.",
     "En son attığın ses kaydını gruba dinlet.",
     "1 dakika boyunca en komik yürüyüşünü yap.",
     "Gruptaki en çekici bulduğun kişiye 10 saniye boyunca bak — bakamazsan shot at.",
@@ -207,7 +204,6 @@ const KARMA_CONTENT = {
     "Mesajlaştığın son kişiye komik bir surat ifadesiyle çektiğin selfie'ni gönder.",
     "Buradaki herkesi zombi kıyametinde hayatta kalma ihtimaline göre sırala — en yüksekten en düşüğe, gerekçeleriyle!",
     "'İyiyim' cümlesini beş farklı dramatik tonda söyle.",
-    "Birini reddediyormuş gibi yap — ama agresif derecede kibar ol.",
     "Önümüzdeki 2 tur boyunca nerede oturacağına grup karar versin.",
     "Ayağa kalk ve grubun seçtiği herhangi bir şeye dramatik bir kadeh kaldırma konuşması yap.",
     {
