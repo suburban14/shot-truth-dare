@@ -139,6 +139,12 @@
     if (navigator.vibrate) navigator.vibrate(pattern);
   }
 
+  // Ses motorunu ilk dokunuşta sessizce kur: shot anında kurulursa
+  // telefonlarda dokunma anını donduruyor.
+  document.addEventListener('pointerdown', () => playSound('init'), { once: true });
+
+  // Konfeti Web Animations API ile sürülür: Safari, @keyframes içindeki CSS
+  // değişkenlerini güvenilir okumadığı için animasyon JS'ten veriliyor.
   function confettiBurst() {
     const colors = ['#ff4d8d', '#a855f7', '#ffd166', '#6ee7b7', '#fb7185', '#ff9f1c'];
     const wrap = document.createElement('div');
@@ -146,13 +152,22 @@
     for (let i = 0; i < 28; i++) {
       const p = document.createElement('i');
       p.style.background = colors[i % colors.length];
-      p.style.setProperty('--dx', `${(Math.random() * 2 - 1) * 180}px`);
-      p.style.setProperty('--dy', `${Math.random() * 320 - 240}px`);
-      p.style.setProperty('--r', `${Math.random() * 720 - 360}deg`);
       wrap.appendChild(p);
+      if (p.animate) {
+        const dx = (Math.random() * 2 - 1) * 180;
+        const dy = Math.random() * 320 - 240;
+        const rot = Math.random() * 720 - 360;
+        p.animate(
+          [
+            { transform: 'translate(0, 0) rotate(0deg) scale(1)', opacity: 1 },
+            { transform: `translate(${dx}px, ${dy}px) rotate(${rot}deg) scale(0.7)`, opacity: 0 },
+          ],
+          { duration: 900 + Math.random() * 300, easing: 'cubic-bezier(0.2, 0.6, 0.3, 1)', fill: 'forwards' }
+        );
+      }
     }
     document.body.appendChild(wrap);
-    setTimeout(() => wrap.remove(), 1200);
+    setTimeout(() => wrap.remove(), 1300);
   }
 
   function showToast(msg) {
@@ -670,7 +685,13 @@
     return state.stats[owner];
   }
 
+  // Shot'ta geçiş bir sonraki kareye ertelenir: konfeti ve buton geri
+  // bildirimi önce çizilsin, telefonda dokunma anı donmasın. Bekleme
+  // sırasında ikinci bir dokunma turu iki kez ilerletmesin diye korumalı.
+  let shotAdvancePending = false;
+
   els.btnDone.addEventListener('click', () => {
+    if (shotAdvancePending) return;
     const st = cardOwnerStats();
     if (st && state.currentCard) {
       if (state.currentCard.type === 'truth') st.truths++;
@@ -680,17 +701,23 @@
   });
 
   document.getElementById('btn-shot').addEventListener('click', () => {
+    if (shotAdvancePending) return;
+    shotAdvancePending = true;
     const st = cardOwnerStats();
     if (st) st.shots++;
     playSound('pop');
     vibrate([30, 40, 30]);
     confettiBurst();
-    nextPlayer();
+    setTimeout(() => {
+      shotAdvancePending = false;
+      nextPlayer();
+    }, 120);
   });
 
   // Joker: oyuncu başına oyunda 1 kez — kartını rastgele birine devreder,
   // bedeli bir shot (otomatik sayaca işlenir).
   els.btnJoker.addEventListener('click', () => {
+    if (shotAdvancePending) return;
     const st = state.stats[currentPlayerName()];
     if (!st || st.jokerUsed || !state.currentCard) return;
     st.jokerUsed = true;
