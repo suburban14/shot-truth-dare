@@ -72,7 +72,10 @@
     <section id="screen-game" class="screen">
       <div class="game-top">
         <button class="btn-back btn-back--ghost" id="btn-back-game" aria-label="Geri">←</button>
-        <span class="round-counter" id="round-counter">Tur 1</span>
+        <div class="game-top__right">
+          <span class="round-counter" id="round-counter">Tur 1</span>
+          <button class="btn-end-night" id="btn-end-night">🌙 Geceyi Bitir</button>
+        </div>
       </div>
 
       <div class="turn-card" id="turn-card">
@@ -115,12 +118,32 @@
         <span class="card-type" id="card-type">DOĞRULUK</span>
         <p class="card-target hidden" id="card-target"></p>
         <p class="card-text" id="card-text"></p>
+        <button class="timer-chip hidden" id="btn-timer"></button>
         <p class="secret-note hidden" id="secret-note">🤫 Görevi aklında tut — bitince kart kapanacak, kimse görmeyecek.</p>
         <div class="card-actions">
           <button class="btn-secondary" id="btn-done">Yaptım ✓</button>
           <button class="btn-shot" id="btn-shot">Shot at 🥃</button>
         </div>
+        <button class="btn-joker hidden" id="btn-joker">🃏 Joker: kartı değiştir — bir yudum iç!</button>
       </div>
+
+      <div class="shot-chips" id="shot-chips"></div>
+    </section>
+
+    <!-- Gece Özeti -->
+    <section id="screen-summary" class="screen">
+      <header class="page-header summary-header">
+        <span class="mode-badge" id="summary-badge"></span>
+        <h2>🌙 Gecenin Özeti</h2>
+        <p class="page-desc" id="summary-meta"></p>
+      </header>
+
+      <div class="awards" id="awards"></div>
+      <ul class="score-list" id="score-list"></ul>
+      <p class="summary-brand">🥃 Shot · Truth or Dare</p>
+
+      <button class="btn-primary" id="btn-new-game">Yeni Oyun — aynı ekip 🔄</button>
+      <button class="btn-secondary btn-home" id="btn-summary-home">Ana Sayfa</button>
     </section>
   </main>
 

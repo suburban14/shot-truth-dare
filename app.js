@@ -9,12 +9,16 @@
     usedVotes: { kizlar: [], karma: [] },
     turnsSinceVote: 0,
     currentCard: null,
+    stats: {},
+    cardsDrawn: 0,
+    timerTotal: 0,
   };
 
   const screens = {
     home: document.getElementById('screen-home'),
     players: document.getElementById('screen-players'),
     game: document.getElementById('screen-game'),
+    summary: document.getElementById('screen-summary'),
   };
 
   const els = {
@@ -31,11 +35,18 @@
     cardTarget: document.getElementById('card-target'),
     cardText: document.getElementById('card-text'),
     btnDone: document.getElementById('btn-done'),
+    btnTimer: document.getElementById('btn-timer'),
+    btnJoker: document.getElementById('btn-joker'),
     votePanel: document.getElementById('vote-panel'),
     voteText: document.getElementById('vote-text'),
     secretWarning: document.getElementById('secret-warning'),
     secretPlayerName: document.getElementById('secret-player-name'),
     secretNote: document.getElementById('secret-note'),
+    shotChips: document.getElementById('shot-chips'),
+    summaryBadge: document.getElementById('summary-badge'),
+    summaryMeta: document.getElementById('summary-meta'),
+    awards: document.getElementById('awards'),
+    scoreList: document.getElementById('score-list'),
   };
 
   const MODE_LABELS = {
@@ -55,6 +66,103 @@
   function getContent() {
     return contentFor(state.mode);
   }
+
+  function currentPlayerName() {
+    return state.players[state.currentPlayerIndex];
+  }
+
+  // ---------- Ses / titreşim / konfeti ----------
+
+  let audioCtx = null;
+
+  function playSound(kind) {
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      audioCtx = audioCtx || new AC();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const t = audioCtx.currentTime;
+
+      const tone = (freq, start, dur, type, vol, endFreq) => {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = type;
+        o.frequency.setValueAtTime(freq, t + start);
+        if (endFreq) o.frequency.exponentialRampToValueAtTime(endFreq, t + start + dur);
+        g.gain.setValueAtTime(0.0001, t + start);
+        g.gain.exponentialRampToValueAtTime(vol, t + start + 0.015);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + start + dur);
+        o.connect(g).connect(audioCtx.destination);
+        o.start(t + start);
+        o.stop(t + start + dur + 0.05);
+      };
+
+      if (kind === 'flip') tone(500, 0, 0.08, 'triangle', 0.05, 220);
+      if (kind === 'pop') {
+        tone(160, 0, 0.18, 'sine', 0.15, 55);
+        tone(950, 0, 0.05, 'triangle', 0.05);
+      }
+      if (kind === 'beep') {
+        tone(880, 0, 0.12, 'square', 0.05);
+        tone(880, 0.2, 0.12, 'square', 0.05);
+      }
+      if (kind === 'fanfare') {
+        tone(440, 0, 0.09, 'triangle', 0.06);
+        tone(554, 0.09, 0.09, 'triangle', 0.06);
+        tone(659, 0.18, 0.16, 'triangle', 0.07);
+      }
+      if (kind === 'shh') {
+        const len = Math.floor(audioCtx.sampleRate * 0.5);
+        const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / len);
+        const src = audioCtx.createBufferSource();
+        src.buffer = buf;
+        const f = audioCtx.createBiquadFilter();
+        f.type = 'bandpass';
+        f.frequency.value = 4000;
+        f.Q.value = 0.6;
+        const g = audioCtx.createGain();
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.09, t + 0.06);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+        src.connect(f).connect(g).connect(audioCtx.destination);
+        src.start(t);
+      }
+    } catch (e) {
+      // Ses çalınamazsa oyun etkilenmesin.
+    }
+  }
+
+  function vibrate(pattern) {
+    if (navigator.vibrate) navigator.vibrate(pattern);
+  }
+
+  function confettiBurst() {
+    const colors = ['#ff4d8d', '#a855f7', '#ffd166', '#6ee7b7', '#fb7185', '#ff9f1c'];
+    const wrap = document.createElement('div');
+    wrap.className = 'confetti';
+    for (let i = 0; i < 28; i++) {
+      const p = document.createElement('i');
+      p.style.background = colors[i % colors.length];
+      p.style.setProperty('--dx', `${(Math.random() * 2 - 1) * 180}px`);
+      p.style.setProperty('--dy', `${Math.random() * 320 - 240}px`);
+      p.style.setProperty('--r', `${Math.random() * 720 - 360}deg`);
+      wrap.appendChild(p);
+    }
+    document.body.appendChild(wrap);
+    setTimeout(() => wrap.remove(), 1200);
+  }
+
+  function showToast(msg) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2400);
+  }
+
+  // ---------- Kart havuzu ve kalıcılık ----------
 
   // Kullanılan kart indekslerini telefonda sakla: oyun kapansa bile tüm
   // sorular bitmeden aynı soru tekrar gelmesin. Soru listesi güncellenirse
@@ -146,6 +254,8 @@
     return normalizeCard(arr[index]);
   }
 
+  // ---------- Oyuncu kurulumu ----------
+
   function shufflePlayers() {
     for (let i = state.players.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -204,15 +314,86 @@
     renderPlayers();
   }
 
+  // ---------- Süre sayacı ----------
+
+  let timerInterval = null;
+
+  function formatDuration(secs) {
+    return secs >= 60 ? `${secs / 60} dk` : `${secs} sn`;
+  }
+
+  function stopTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+
+  // Kart metninde "30 saniye" / "1 dakika" geçiyorsa sayaç çipini göster.
+  // Gizli görevlerde ve 2 dakikadan uzun sürelerde (telefon elde durmaz) gösterme.
+  function setupTimer(card) {
+    stopTimer();
+    els.btnTimer.classList.add('hidden');
+    els.btnTimer.classList.remove('timer-chip--running', 'timer-chip--done');
+    if (card.secret) return;
+    const match = card.text.match(/(\d+)\s*(saniye|dakika)/i);
+    if (!match) return;
+    const secs = parseInt(match[1], 10) * (match[2].toLowerCase() === 'dakika' ? 60 : 1);
+    if (secs > 120) return;
+    state.timerTotal = secs;
+    els.btnTimer.textContent = `⏱ ${formatDuration(secs)} — başlat`;
+    els.btnTimer.style.setProperty('--progress', '0%');
+    els.btnTimer.classList.remove('hidden');
+  }
+
+  function toggleTimer() {
+    if (timerInterval) {
+      stopTimer();
+      setupTimer(state.currentCard);
+      return;
+    }
+    let left = state.timerTotal;
+    els.btnTimer.classList.remove('timer-chip--done');
+    els.btnTimer.classList.add('timer-chip--running');
+    const tick = () => {
+      els.btnTimer.textContent = `⏱ ${left} sn`;
+      els.btnTimer.style.setProperty('--progress', `${(100 * (state.timerTotal - left)) / state.timerTotal}%`);
+      if (left <= 0) {
+        stopTimer();
+        els.btnTimer.textContent = '🔔 Süre doldu!';
+        els.btnTimer.classList.remove('timer-chip--running');
+        els.btnTimer.classList.add('timer-chip--done');
+        playSound('beep');
+        vibrate([100, 50, 100]);
+      }
+      left--;
+    };
+    tick();
+    timerInterval = setInterval(tick, 1000);
+  }
+
+  // ---------- Oyun akışı ----------
+
   function resetGameView() {
     state.currentCard = null;
+    stopTimer();
     els.choicePanel.classList.remove('hidden');
     els.cardPanel.classList.add('hidden');
     els.votePanel.classList.add('hidden');
     els.secretWarning.classList.add('hidden');
     els.secretNote.classList.add('hidden');
     els.cardTarget.classList.add('hidden');
+    els.btnTimer.classList.add('hidden');
     els.cardPanel.classList.remove('card-panel--truth', 'card-panel--dare', 'card-panel--secret');
+  }
+
+  function renderChips() {
+    els.shotChips.innerHTML = '';
+    state.players.forEach((name, i) => {
+      const chip = document.createElement('span');
+      chip.className = 'shot-chip' + (i === state.currentPlayerIndex ? ' shot-chip--active' : '');
+      const st = state.stats[name] || { shots: 0 };
+      chip.textContent = `${name} 🥃${st.shots}`;
+      els.shotChips.appendChild(chip);
+    });
   }
 
   // Oylama araya sürpriz olarak girer: en az 3 oyuncu varken, son oylamadan
@@ -228,16 +409,19 @@
   function showVote() {
     const card = pickRandom(getContent().votes, 'usedVotes');
     state.turnsSinceVote = 0;
+    state.cardsDrawn++;
     els.choicePanel.classList.add('hidden');
     els.votePanel.classList.remove('hidden');
     els.voteText.textContent = card.text;
+    playSound('fanfare');
+    vibrate(40);
   }
 
   function updateTurnDisplay() {
-    const player = state.players[state.currentPlayerIndex];
-    els.currentPlayer.textContent = player;
+    els.currentPlayer.textContent = currentPlayerName();
     els.roundCounter.textContent = `Tur ${state.round}`;
     resetGameView();
+    renderChips();
 
     const turnCard = document.getElementById('turn-card');
     if (turnCard) {
@@ -255,13 +439,17 @@
         : pickRandom(content.dares, 'usedDares');
 
     state.currentCard = { ...card, type };
+    state.cardsDrawn++;
     if (card.target) state.currentCard.targetName = pickTargetPlayer();
     els.choicePanel.classList.add('hidden');
+    els.cardPanel.classList.add('hidden');
 
     if (card.secret) {
       // Gizli görev: önce herkese uyarı göster, metni sadece oyuncu açsın.
-      els.secretPlayerName.textContent = state.players[state.currentPlayerIndex];
+      els.secretPlayerName.textContent = currentPlayerName();
       els.secretWarning.classList.remove('hidden');
+      playSound('shh');
+      vibrate(80);
       return;
     }
 
@@ -276,6 +464,7 @@
     els.cardType.textContent = card.type === 'truth' ? 'DOĞRULUK' : 'CESARET';
     els.cardText.textContent = card.text;
     els.btnDone.textContent = card.type === 'truth' ? 'Cevapladım ✓' : 'Yaptım ✓';
+    playSound('flip');
 
     if (card.targetName) {
       els.cardTarget.textContent = `🎯 Seçilen kişi: ${card.targetName}`;
@@ -287,8 +476,11 @@
       els.cardType.textContent = 'GİZLİ GÖREV';
       els.secretNote.classList.remove('hidden');
     }
-  }
 
+    const st = state.stats[currentPlayerName()];
+    els.btnJoker.classList.toggle('hidden', !st || st.jokerUsed);
+    setupTimer(card);
+  }
 
   function nextPlayer() {
     state.currentPlayerIndex++;
@@ -315,6 +507,12 @@
     shufflePlayers();
     state.currentPlayerIndex = 0;
     state.round = 1;
+    state.turnsSinceVote = 0;
+    state.cardsDrawn = 0;
+    state.stats = {};
+    state.players.forEach((name) => {
+      state.stats[name] = { shots: 0, truths: 0, dares: 0, jokerUsed: false };
+    });
     updateTurnDisplay();
     showScreen('game');
   }
@@ -331,6 +529,96 @@
     showScreen('players');
     els.playerInput.focus();
   }
+
+  // ---------- Gece özeti ----------
+
+  function showSummary() {
+    const players = state.players;
+    const statOf = (name) => state.stats[name] || { shots: 0, truths: 0, dares: 0, jokerUsed: false };
+
+    const label = MODE_LABELS[state.mode];
+    els.summaryBadge.textContent = label.name;
+    els.summaryBadge.className = `mode-badge ${label.class}`;
+    els.summaryMeta.textContent = `${state.round} tur · ${state.cardsDrawn} kart açıldı · ${players.length} oyuncu`;
+
+    const maxBy = (key) => {
+      const max = Math.max(...players.map((n) => statOf(n)[key]));
+      return { value: max, names: players.filter((n) => statOf(n)[key] === max) };
+    };
+    const minBy = (key) => {
+      const min = Math.min(...players.map((n) => statOf(n)[key]));
+      return { value: min, names: players.filter((n) => statOf(n)[key] === min) };
+    };
+    const joinNames = (names) => (names.length > 3 ? `${names.length} kişi berabere` : names.join(' & '));
+
+    const shotsMax = maxBy('shots');
+    const shotsMin = minBy('shots');
+    const daresMax = maxBy('dares');
+    const truthsMax = maxBy('truths');
+    const jokers = players.filter((n) => statOf(n).jokerUsed);
+
+    const awards = [];
+    const crownTitle = state.mode === 'kizlar' ? 'Gecenin Shot Kraliçesi' : 'Gecenin Shot Şampiyonu';
+    if (shotsMax.value > 0) {
+      awards.push({ emoji: '🏆', title: crownTitle, name: `${joinNames(shotsMax.names)} · ${shotsMax.value} shot` });
+      if (shotsMin.names.length < players.length) {
+        awards.push({ emoji: '😇', title: 'En Temiz Oyuncu', name: `${joinNames(shotsMin.names)} · ${shotsMin.value} shot` });
+      }
+    } else {
+      awards.push({ emoji: '😇', title: 'Tertemiz Gece', name: 'Kimse shot atmadı — helal olsun!' });
+    }
+    if (daresMax.value > 0) {
+      awards.push({ emoji: '🔥', title: 'En Cesur', name: `${joinNames(daresMax.names)} · ${daresMax.value} cesaret` });
+    }
+    if (truthsMax.value > 0) {
+      awards.push({ emoji: '💬', title: 'Gecenin Filozofu', name: `${joinNames(truthsMax.names)} · ${truthsMax.value} doğruluk` });
+    }
+    if (jokers.length > 0) {
+      awards.push({ emoji: '🃏', title: 'Joker Kullananlar', name: joinNames(jokers) });
+    }
+
+    els.awards.innerHTML = '';
+    awards.forEach((a) => {
+      const row = document.createElement('div');
+      row.className = 'award';
+      const emoji = document.createElement('span');
+      emoji.className = 'award__emoji';
+      emoji.textContent = a.emoji;
+      const info = document.createElement('div');
+      const title = document.createElement('p');
+      title.className = 'award__title';
+      title.textContent = a.title;
+      const name = document.createElement('p');
+      name.className = 'award__name';
+      name.textContent = a.name;
+      info.appendChild(title);
+      info.appendChild(name);
+      row.appendChild(emoji);
+      row.appendChild(info);
+      els.awards.appendChild(row);
+    });
+
+    els.scoreList.innerHTML = '';
+    [...players]
+      .sort((a, b) => statOf(b).shots - statOf(a).shots)
+      .forEach((name) => {
+        const st = statOf(name);
+        const li = document.createElement('li');
+        const left = document.createElement('span');
+        left.textContent = name;
+        const right = document.createElement('span');
+        right.textContent = `🥃 ${st.shots} · 🔥 ${st.dares} · 💬 ${st.truths}`;
+        li.appendChild(left);
+        li.appendChild(right);
+        els.scoreList.appendChild(li);
+      });
+
+    showScreen('summary');
+    playSound('fanfare');
+    confettiBurst();
+  }
+
+  // ---------- Olaylar ----------
 
   loadUsedCards();
 
@@ -358,6 +646,12 @@
     }
   });
 
+  document.getElementById('btn-end-night').addEventListener('click', () => {
+    if (confirm('Geceyi bitirip özeti görelim mi? 🌙')) {
+      showSummary();
+    }
+  });
+
   els.btnStart.addEventListener('click', startGame);
 
   document.getElementById('btn-truth').addEventListener('click', () => showCard('truth'));
@@ -367,12 +661,44 @@
 
   // Cevapladım/Yaptım veya Shot → doğrudan sıradaki oyuncuya geç.
   // Ekran anında sıfırlandığı için gizli görev metni de kimseye görünmez.
-  els.btnDone.addEventListener('click', nextPlayer);
-  document.getElementById('btn-shot').addEventListener('click', nextPlayer);
+  els.btnDone.addEventListener('click', () => {
+    const st = state.stats[currentPlayerName()];
+    if (st && state.currentCard) {
+      if (state.currentCard.type === 'truth') st.truths++;
+      else st.dares++;
+    }
+    nextPlayer();
+  });
+
+  document.getElementById('btn-shot').addEventListener('click', () => {
+    const st = state.stats[currentPlayerName()];
+    if (st) st.shots++;
+    playSound('pop');
+    vibrate([30, 40, 30]);
+    confettiBurst();
+    nextPlayer();
+  });
+
+  // Joker: oyuncu başına oyunda 1 kez, aynı türden yeni kart çeker.
+  els.btnJoker.addEventListener('click', () => {
+    const st = state.stats[currentPlayerName()];
+    if (!st || st.jokerUsed || !state.currentCard) return;
+    st.jokerUsed = true;
+    showToast('🃏 Joker kullanıldı — bir yudum iç!');
+    showCard(state.currentCard.type);
+  });
+
+  els.btnTimer.addEventListener('click', toggleTimer);
 
   // Oylama bitti → aynı oyuncu normal turuna devam eder.
   document.getElementById('btn-vote-done').addEventListener('click', () => {
     els.votePanel.classList.add('hidden');
     els.choicePanel.classList.remove('hidden');
+  });
+
+  document.getElementById('btn-new-game').addEventListener('click', startGame);
+
+  document.getElementById('btn-summary-home').addEventListener('click', () => {
+    showScreen('home');
   });
 })();
