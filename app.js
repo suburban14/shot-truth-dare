@@ -145,13 +145,29 @@
 
   // Konfeti Web Animations API ile sürülür: Safari, @keyframes içindeki CSS
   // değişkenlerini güvenilir okumadığı için animasyon JS'ten veriliyor.
-  function confettiBurst() {
+  // Önemli: parçacıklar önce DOM'a eklenir, animasyon sonra başlatılır —
+  // Safari, sayfada olmayan elemanın animasyonunu çalıştırmıyor. Stiller de
+  // eski CSS önbellekte kalsa bile çalışsın diye satır içi verilir.
+  function confettiBurst(originEl) {
     const colors = ['#ff4d8d', '#a855f7', '#ffd166', '#6ee7b7', '#fb7185', '#ff9f1c'];
     const wrap = document.createElement('div');
     wrap.className = 'confetti';
+    wrap.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:55;overflow:hidden;';
+    document.body.appendChild(wrap);
+
+    let x = window.innerWidth / 2;
+    let y = window.innerHeight * 0.55;
+    if (originEl) {
+      const rect = originEl.getBoundingClientRect();
+      x = rect.left + rect.width / 2;
+      y = rect.top + rect.height / 2;
+    }
+
     for (let i = 0; i < 28; i++) {
       const p = document.createElement('i');
-      p.style.background = colors[i % colors.length];
+      p.style.cssText =
+        `position:absolute;left:${x - 4}px;top:${y - 6}px;width:8px;height:13px;` +
+        `border-radius:2px;background:${colors[i % colors.length]};`;
       wrap.appendChild(p);
       if (p.animate) {
         const dx = (Math.random() * 2 - 1) * 180;
@@ -166,7 +182,6 @@
         );
       }
     }
-    document.body.appendChild(wrap);
     setTimeout(() => wrap.remove(), 1300);
   }
 
@@ -707,7 +722,7 @@
     if (st) st.shots++;
     playSound('pop');
     vibrate([30, 40, 30]);
-    confettiBurst();
+    confettiBurst(document.getElementById('btn-shot'));
     setTimeout(() => {
       shotAdvancePending = false;
       nextPlayer();
@@ -741,7 +756,7 @@
     showToast(`🃏 Yeni sahibi: ${newOwner} — sen bir shot at!`);
     playSound('pop');
     vibrate([30, 40, 30]);
-    confettiBurst();
+    confettiBurst(els.btnJoker);
     renderChips();
   });
 
