@@ -413,7 +413,7 @@
     els.voteText.textContent = card.text;
     // Oylama herkesin işi: sıra kartı 'Herkes' göstersin.
     els.turnLabel.textContent = 'Sıra herkeste';
-    els.currentPlayer.textContent = 'Herkes 🗳️';
+    els.currentPlayer.textContent = 'Herkes';
     playSound('fanfare');
     vibrate(40);
   }
