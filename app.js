@@ -29,6 +29,7 @@
     btnStart: document.getElementById('btn-start-game'),
     roundCounter: document.getElementById('round-counter'),
     currentPlayer: document.getElementById('current-player'),
+    turnLabel: document.querySelector('.turn-label'),
     choicePanel: document.getElementById('choice-panel'),
     cardPanel: document.getElementById('card-panel'),
     cardType: document.getElementById('card-type'),
@@ -410,11 +411,23 @@
     els.choicePanel.classList.add('hidden');
     els.votePanel.classList.remove('hidden');
     els.voteText.textContent = card.text;
+    // Oylama herkesin işi: sıra kartı 'Herkes' göstersin.
+    els.turnLabel.textContent = 'Sıra herkeste';
+    els.currentPlayer.textContent = 'Herkes 🗳️';
     playSound('fanfare');
     vibrate(40);
   }
 
+  // Oylama bitti → sıra kartı normale döner, aynı oyuncu turuna devam eder.
+  function endVote() {
+    els.votePanel.classList.add('hidden');
+    els.choicePanel.classList.remove('hidden');
+    els.turnLabel.textContent = 'Sıra sende';
+    els.currentPlayer.textContent = currentPlayerName();
+  }
+
   function updateTurnDisplay() {
+    els.turnLabel.textContent = 'Sıra sende';
     els.currentPlayer.textContent = currentPlayerName();
     els.roundCounter.textContent = `Tur ${state.round}`;
     resetGameView();
@@ -716,11 +729,7 @@
 
   els.btnTimer.addEventListener('click', toggleTimer);
 
-  // Oylama bitti → aynı oyuncu normal turuna devam eder.
-  document.getElementById('btn-vote-done').addEventListener('click', () => {
-    els.votePanel.classList.add('hidden');
-    els.choicePanel.classList.remove('hidden');
-  });
+  document.getElementById('btn-vote-done').addEventListener('click', endVote);
 
   document.getElementById('btn-new-game').addEventListener('click', startGame);
 
