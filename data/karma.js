@@ -344,26 +344,17 @@ const KARMA_CONTENT = {
       double: true,
     },
     "Podyum edasıyla tek omzunu açıp 5 saniye poz ver — grup alkışlasın.",
-    {
-      text: "Ona en seksi sesinle, kulağına söyleyeceğin bir cümle fısılda — sadece o duysun.",
-      target: true,
-    },
     "En baştan çıkarıcı 'gel buraya' bakışını 10 saniye sürdür — grup kime yapacağını seçsin.",
     {
       text: "Ya bir gecelik en çılgın anını isim vermeden anlat ya da 2 shot at!",
       double: true,
     },
     "Dudaklarını ısırarak en çekici pozunu ver ve grubun biri fotoğraf çeksin.",
-    {
-      text: "Onun tam önünde 15 saniyelik baştan çıkarıcı bir dans et.",
-      target: true,
-    },
     "Bir striptiz müziği mırıldanarak ceketini/gömleğini olabildiğince baştan çıkarıcı çıkar.",
     {
       text: "Ya bu odada bir gece geçirmek isteyeceğin kişinin baş harfini söyle ya da 2 shot at!",
       double: true,
     },
-    "En ateşli inleme taklidini yap — 5 saniye, grup gülmeden dinlesin, gülen shot atar.",
     {
       text: "Ya en son attığın gece mesajını sesli oku ya da 2 shot at!",
       double: true,

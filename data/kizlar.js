@@ -375,10 +375,6 @@ const KIZLAR_CONTENT = {
       double: true,
     },
     "Bir pipeti ya da kiraz sapını sadece dilinle düğümlemeye çalış — 1 dakikan var, başaramazsan shot!",
-    {
-      text: "Onun boynundan kulağına kadar hayali bir öpücük yolunu havada göster — dokunmadan, sadece anlat.",
-      target: true,
-    },
     "En baştan çıkarıcı 'gel buraya' bakışını 10 saniye sürdür — grup kime yapacağını seçsin.",
     {
       text: "Ona en seksi sesinle, yatak odasında söyleyeceğin bir cümle fısılda — sadece o duysun.",
@@ -395,18 +391,10 @@ const KIZLAR_CONTENT = {
       double: true,
     },
     "Bir striptiz müziği mırıldanarak hırkanı/ceketini olabildiğince baştan çıkarıcı çıkar.",
-    {
-      text: "Onun kucağına oturmadan, tam önünde 15 saniyelik bir dans et.",
-      target: true,
-    },
     "En ateşli inleme taklidini yap — 5 saniye, grup gülmeden dinlesin, gülen shot atar.",
     {
       text: "Ya bu odada bir gece geçirmek isteyeceğin kişinin baş harfini söyle ya da 2 shot at!",
       double: true,
-    },
-    {
-      text: "Gözlerin kapalı — biri (bilmiyorsun kim) boynuna 3 saniye nefesini versin. Kim olduğunu tahmin et, bilemezsen shot!",
-      secret: true,
     },
     "Vücudunda öpülmesinden en çok hoşlandığın yeri, dokunmadan işaret et.",
     "En seksi yürüyüşünle odayı bir tur at, dönüşte bir öpücük yolla.",
