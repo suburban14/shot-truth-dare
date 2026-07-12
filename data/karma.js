@@ -9,7 +9,7 @@ const KARMA_CONTENT = {
     "Hiç gruptaki birine gizli bir ilgi duydun mu?",
     "En son ne zaman birine yanlışlıkla 'seni seviyorum' dedin?",
     "En utanç verici sarhoş anın neydi?",
-    "Hâlâ ne yaptığını takip ettiğin bir ex'in var mı?",
+    "Hala ne yaptığını takip ettiğin bir ex'in var mı?",
     "En son ne zaman birinin profiline saatlerce baktın?",
     "Grupta en çok kıskandığın kişi kim?",
     "Gece sonunda pişman olduğun bir öpüşme oldu mu hiç?",
@@ -49,7 +49,7 @@ const KARMA_CONTENT = {
     "En son kimi öptün?",
     "Zombi kıyametinde bu gruptan kimi yanında isterdin?",
     "Öğretmenlerinden birine hiç aşık oldun mu?",
-    "Toksik özelliğin ne?",
+    "En toksik özelliğin ne?",
     "Söylediğin son yalanı itiraf et — küçücük olsa bile.",
     "İsim vermeden ama iddialı detaylarla anlat: en kötü randevun ya da en büyük flört fiyaskon neydi?",
     "Birinde çekici bulduğun en garip şey ne?",
@@ -225,7 +225,7 @@ const KARMA_CONTENT = {
       double: true,
     },
     {
-      text: "Ya en son aradığın kişiyi hoparlörden geri ara ya da 2 shot at!",
+      text: "Ya en son aradığın kişiyi hoparlörden geri ara ya da 2 shot at! Gruptan biri olamaz.",
       double: true,
     },
     {
@@ -262,7 +262,7 @@ const KARMA_CONTENT = {
       secret: true,
     },
     {
-      text: "O her kadeh kaldırdığında sen de kaldır ve göz kırp — fark ederse sen shot atarsın.",
+      text: "O her yudum aldığında sen de kadehini kaldır ve 'şerefe' de — fark ederse sen shot atarsın.",
       secret: true,
       target: true,
     },
@@ -353,6 +353,6 @@ const KARMA_CONTENT = {
     "Herkes 'kavga çıksa ilk kaçar' dediğini göstersin — en çok oyu alan shot atar!",
     "Herkes grubun en iyi yalancısını göstersin — en çok oyu alan iki doğru bir yalan söyler, grup bilemezse herkes shot!",
     "Herkes telefon bağımlısını göstersin — en çok oyu alan telefonunu bu tur ortaya koyar!",
-    "Herkes grubun en sorumlusunu göstersin — en çok oyu alan bu oylamada shot'tan muaf, onun yerine sağındaki atar!",
+    "Herkes grubun en sorumlusunu göstersin — en çok oyu alan bu oylamada shot'tan muaf, onun yerine sağındaki shot atar!",
   ],
 };
